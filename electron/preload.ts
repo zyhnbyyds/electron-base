@@ -1,11 +1,12 @@
-import { contextBridge } from 'electron';
+import { contextBridge, ipcRenderer } from 'electron'
 
-contextBridge.exposeInMainWorld('appInfo', {
-  name: 'tt',
-  runtime: 'Electron',
-  versions: {
-    chrome: process.versions.chrome,
-    electron: process.versions.electron,
-    node: process.versions.node
-  }
-});
+const IPC_CHANNELS = {
+  getAppInfo: 'system:get-app-info',
+  openExternal: 'shell:open-external',
+} as const
+
+contextBridge.exposeInMainWorld('desktop', {
+  isElectron: true,
+  getAppInfo: () => ipcRenderer.invoke(IPC_CHANNELS.getAppInfo),
+  openExternal: (url: string) => ipcRenderer.invoke(IPC_CHANNELS.openExternal, url),
+})

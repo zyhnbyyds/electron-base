@@ -1,8 +1,13 @@
-import { app, BrowserWindow } from 'electron';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { app, BrowserWindow, ipcMain, shell } from 'electron'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const IPC_CHANNELS = {
+  getAppInfo: 'system:get-app-info',
+  openExternal: 'shell:open-external',
+} as const
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 function createWindow() {
   const mainWindow = new BrowserWindow({
@@ -12,32 +17,59 @@ function createWindow() {
     minHeight: 680,
     titleBarStyle: 'hiddenInset',
     autoHideMenuBar: true,
-    backgroundColor: '#f3ecdf',
+    backgroundColor: '#f3f1eb',
     webPreferences: {
-      preload: path.join(__dirname, 'preload.mjs')
-    }
-  });
+      preload: path.join(__dirname, 'preload.mjs'),
+    },
+  })
+
+  mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+    void shell.openExternal(url)
+    return { action: 'deny' }
+  })
 
   if (process.env.VITE_DEV_SERVER_URL) {
-    mainWindow.loadURL(process.env.VITE_DEV_SERVER_URL);
-    return;
+    mainWindow.loadURL(process.env.VITE_DEV_SERVER_URL)
+    return
   }
 
-  mainWindow.loadFile(path.join(__dirname, '../dist/index.html'));
+  mainWindow.loadFile(path.join(__dirname, '../dist/index.html'))
 }
 
 app.whenReady().then(() => {
-  createWindow();
+  createWindow()
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
-      createWindow();
+      createWindow()
     }
-  });
-});
+  })
+})
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
-    app.quit();
+    app.quit()
   }
-});
+})
+
+ipcMain.handle(IPC_CHANNELS.getAppInfo, () => {
+  return {
+    name: 'Desktop Template',
+    runtime: 'Electron',
+    platform: process.platform,
+    versions: {
+      chrome: process.versions.chrome,
+      electron: process.versions.electron,
+      node: process.versions.node,
+    },
+  }
+})
+
+ipcMain.handle(IPC_CHANNELS.openExternal, async (_event, url: string) => {
+  try {
+    await shell.openExternal(url)
+    return true
+  } catch {
+    return false
+  }
+})
