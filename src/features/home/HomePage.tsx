@@ -16,33 +16,61 @@ interface HomePageProps {
 export function HomePage({ appInfo, openExternal }: HomePageProps) {
   return (
     <div className="space-y-6 md:space-y-8">
-      <section id="overview" className="template-card rounded-[28px] px-6 py-7 md:px-8 md:py-9">
-        <div className="max-w-3xl space-y-5">
-          <p className="template-kicker text-[11px] font-semibold text-stone-400">
-            Electron Template
-          </p>
-          <div className="space-y-3">
-            <h1 className="text-3xl font-semibold tracking-[-0.04em] text-stone-950 md:text-5xl">
-              一个更干净的桌面应用起点。
-            </h1>
-            <p className="max-w-2xl text-sm leading-7 text-stone-500 md:text-base">
-              这里不再绑定任何笔记业务。当前项目已经收敛为模板骨架，保留桌面桥接、样式系统、类型约束和基础布局，后续可以直接接入你的真实业务模块。
+      <section
+        id="overview"
+        className="hero-panel overflow-hidden rounded-[32px] px-6 py-7 md:px-8 md:py-9"
+      >
+        <div className="grid gap-8 xl:grid-cols-[minmax(0,1.15fr)_360px] xl:items-end">
+          <div className="relative max-w-3xl space-y-6">
+            <div className="hero-orbit absolute -left-10 top-2 hidden h-28 w-28 xl:block" />
+            <p className="template-kicker text-[11px] font-semibold text-stone-400">
+              Immersive Desktop Template
             </p>
+            <div className="space-y-4">
+              <h1 className="max-w-3xl text-4xl font-semibold tracking-[-0.06em] text-stone-950 md:text-6xl">
+                用更安静的页面，承载更重的桌面业务。
+              </h1>
+              <p className="max-w-2xl text-sm leading-7 text-stone-600 md:text-base">
+                这个模板现在更像一个工作台，而不是演示页。顶部状态栏负责传达环境与状态，首屏负责说明结构与能力，其余视觉层尽量退后，让后续业务更容易接入。
+              </p>
+            </div>
+
+            <div className="flex flex-wrap gap-3">
+              {quickLinks.map((item) => (
+                <button
+                  key={item.href}
+                  type="button"
+                  onClick={() => {
+                    void openExternal(item.href)
+                  }}
+                  className="rounded-full border border-stone-300/80 bg-white/80 px-4 py-2 text-sm text-stone-700 transition-all hover:-translate-y-0.5 hover:border-stone-900 hover:text-stone-950"
+                >
+                  {item.label}
+                </button>
+              ))}
+            </div>
           </div>
 
-          <div className="flex flex-wrap gap-3">
-            {quickLinks.map((item) => (
-              <button
-                key={item.href}
-                type="button"
-                onClick={() => {
-                  void openExternal(item.href)
-                }}
-                className="rounded-full border border-stone-300 bg-white px-4 py-2 text-sm text-stone-700 transition-colors hover:border-stone-900 hover:text-stone-950"
-              >
-                {item.label}
-              </button>
-            ))}
+          <div className="hero-grid rounded-[28px] p-4 md:p-5">
+            <div className="rounded-[22px] border border-white/80 bg-white/75 p-5">
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-stone-400">
+                Template Snapshot
+              </p>
+              <div className="mt-4 grid gap-3">
+                <div className="flex items-center justify-between rounded-2xl bg-stone-50/90 px-4 py-3">
+                  <span className="text-sm text-stone-500">Runtime</span>
+                  <span className="text-sm font-medium text-stone-900">{appInfo.runtime}</span>
+                </div>
+                <div className="flex items-center justify-between rounded-2xl bg-stone-50/90 px-4 py-3">
+                  <span className="text-sm text-stone-500">Bridge</span>
+                  <span className="text-sm font-medium text-stone-900">Typed / Ready</span>
+                </div>
+                <div className="flex items-center justify-between rounded-2xl bg-stone-50/90 px-4 py-3">
+                  <span className="text-sm text-stone-500">Version</span>
+                  <span className="text-sm font-medium text-stone-900">{templateMeta.version}</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -58,7 +86,7 @@ export function HomePage({ appInfo, openExternal }: HomePageProps) {
               {presetCapabilities.map((item) => (
                 <div
                   key={item}
-                  className="rounded-2xl border border-stone-200 bg-stone-50/80 px-4 py-3 text-sm text-stone-700"
+                  className="rounded-2xl border border-stone-200/80 bg-stone-50/80 px-4 py-3 text-sm text-stone-700 transition-transform hover:-translate-y-0.5"
                 >
                   {item}
                 </div>
@@ -75,7 +103,7 @@ export function HomePage({ appInfo, openExternal }: HomePageProps) {
               {projectStructure.map((item) => (
                 <div
                   key={item.title}
-                  className="flex items-start justify-between gap-4 rounded-2xl border border-stone-200 bg-white px-4 py-4"
+                  className="flex items-start justify-between gap-4 rounded-2xl border border-stone-200/80 bg-white/88 px-4 py-4"
                 >
                   <div>
                     <p className="text-sm font-medium text-stone-900">{item.title}</p>
@@ -95,19 +123,19 @@ export function HomePage({ appInfo, openExternal }: HomePageProps) {
               description="这些数据来自 preload bridge，证明渲染层已经和 Electron 做了类型化解耦。"
             >
               <dl className="space-y-3 text-sm">
-                <div className="flex items-center justify-between rounded-2xl bg-stone-50 px-4 py-3">
+                <div className="flex items-center justify-between rounded-2xl bg-stone-50/90 px-4 py-3">
                   <dt className="text-stone-500">应用名</dt>
                   <dd className="font-medium text-stone-900">{appInfo.name}</dd>
                 </div>
-                <div className="flex items-center justify-between rounded-2xl bg-stone-50 px-4 py-3">
+                <div className="flex items-center justify-between rounded-2xl bg-stone-50/90 px-4 py-3">
                   <dt className="text-stone-500">运行时</dt>
                   <dd className="font-medium text-stone-900">{appInfo.runtime}</dd>
                 </div>
-                <div className="flex items-center justify-between rounded-2xl bg-stone-50 px-4 py-3">
+                <div className="flex items-center justify-between rounded-2xl bg-stone-50/90 px-4 py-3">
                   <dt className="text-stone-500">平台</dt>
                   <dd className="font-medium text-stone-900">{appInfo.platform}</dd>
                 </div>
-                <div className="flex items-center justify-between rounded-2xl bg-stone-50 px-4 py-3">
+                <div className="flex items-center justify-between rounded-2xl bg-stone-50/90 px-4 py-3">
                   <dt className="text-stone-500">Chrome</dt>
                   <dd className="font-medium text-stone-900">{appInfo.versions.chrome}</dd>
                 </div>
@@ -125,7 +153,7 @@ export function HomePage({ appInfo, openExternal }: HomePageProps) {
                 {qualityScripts.map((item) => (
                   <div
                     key={item}
-                    className="rounded-2xl border border-stone-200 bg-white px-4 py-3 font-mono text-sm text-stone-700"
+                    className="rounded-2xl border border-stone-200/80 bg-white/88 px-4 py-3 font-mono text-sm text-stone-700"
                   >
                     {item}
                   </div>
