@@ -1,6 +1,5 @@
-import { useEffect, useState, type MouseEvent, type ReactNode } from 'react'
-import { Avatar, Button, Divider, Flex, Layout, Segmented, Tag, Tooltip, Typography } from 'antd'
-import { templateMeta } from '@/shared/config/app'
+import { type MouseEvent, type ReactNode } from 'react'
+import { Avatar, Button, Flex, Layout } from 'antd'
 import type { DesktopWindowControls, DesktopWindowState } from '@/shared/types/desktop'
 import type { DesktopAppInfo } from '@/shared/types/desktop'
 
@@ -20,29 +19,7 @@ interface AppShellProps {
   children: ReactNode
 }
 
-export function AppShell({
-  appInfo,
-  navigation,
-  activeSection,
-  onSelect,
-  isElectron,
-  windowControls,
-  windowState,
-  children,
-}: AppShellProps) {
-  const [now, setNow] = useState(() => new Date())
-  const isWindows = appInfo.platform === 'win32'
-
-  useEffect(() => {
-    const timer = window.setInterval(() => {
-      setNow(new Date())
-    }, 60_000)
-
-    return () => {
-      window.clearInterval(timer)
-    }
-  }, [])
-
+export function AppShell({ isElectron, windowControls, windowState, children }: AppShellProps) {
   function handleTitleBarDoubleClick(event: MouseEvent<HTMLElement>) {
     if (!isElectron) {
       return
@@ -54,7 +31,7 @@ export function AppShell({
       return
     }
 
-    if (target.closest('.app-no-drag')) {
+    if (target.closest('[data-nodrag]')) {
       return
     }
 
@@ -62,18 +39,11 @@ export function AppShell({
   }
 
   return (
-    <div className="shell-backdrop min-h-screen">
-      <Layout className="h-screen bg-transparent">
-        <div
-          className={[
-            'app-window-frame',
-            'template-surface',
-            windowState.isMaximized ? 'app-window-frame--maximized' : '',
-            isWindows ? 'app-window-frame--windows' : '',
-          ].join(' ')}
-        >
+    <div className="h-screen">
+      <Layout className="h-full bg-transparent">
+        <div className="relative flex h-full w-full flex-col overflow-hidden">
           <Layout.Header
-            className="app-drag app-header !h-14 !bg-transparent !px-5"
+            className="!h-14 !px-5 !bg-[#faf9f7] border-b border-b-[rgba(23,23,23,0.08)] [-webkit-app-region:drag]"
             onDoubleClick={handleTitleBarDoubleClick}
           >
             <Flex align="center" justify="space-between" className="h-full" gap={12}>
@@ -92,87 +62,56 @@ export function AppShell({
                 >
                   DT
                 </Avatar>
-                <div className="app-no-drag leading-tight">
-                  <Typography.Text strong className="!block !text-sm !leading-none !text-stone-900">
-                    {templateMeta.name}
-                  </Typography.Text>
-                  <Typography.Text className="!text-[11px] !leading-none !text-stone-400">
-                    {templateMeta.description}
-                  </Typography.Text>
-                </div>
               </Flex>
 
-              {/* 中间：导航 */}
-              <Segmented
-                className="app-no-drag"
-                options={navigation.map((item) => ({ label: item.label, value: item.id }))}
-                value={activeSection}
-                onChange={(value) => onSelect(value as string)}
-              />
-
               {/* 右侧：状态 + 窗口控制 */}
-              <Flex gap={6} align="center" className="app-no-drag shrink-0">
-                <Tag bordered={false} style={{ margin: 0 }}>
-                  Ready
-                </Tag>
-                <Tag bordered={false} style={{ margin: 0 }}>
-                  Electron {appInfo.versions.electron}
-                </Tag>
-                <Typography.Text className="!min-w-[36px] !text-right !text-xs !text-stone-400">
-                  {now.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' })}
-                </Typography.Text>
+              <Flex
+                gap={6}
+                align="center"
+                className="shrink-0 [-webkit-app-region:no-drag]"
+                data-nodrag
+              >
                 {isElectron ? (
                   <>
-                    <Divider type="vertical" className="!mx-1 !h-4" />
-                    <Tooltip title="最小化">
-                      <Button
-                        size="small"
-                        shape="circle"
-                        type="text"
-                        aria-label="最小化窗口"
-                        onClick={() => {
-                          void windowControls.minimize()
-                        }}
-                      >
-                        <span className="window-control-glyph">－</span>
-                      </Button>
-                    </Tooltip>
-                    <Tooltip title={windowState.isMaximized ? '还原' : '最大化'}>
-                      <Button
-                        size="small"
-                        shape="circle"
-                        type="text"
-                        aria-label={windowState.isMaximized ? '还原窗口' : '最大化窗口'}
-                        onClick={() => {
-                          void windowControls.toggleMaximize()
-                        }}
-                      >
-                        <span className="window-control-glyph">
-                          {windowState.isMaximized ? '❐' : '□'}
-                        </span>
-                      </Button>
-                    </Tooltip>
-                    <Tooltip title="关闭">
-                      <Button
-                        size="small"
-                        danger
-                        shape="circle"
-                        type="text"
-                        aria-label="关闭窗口"
-                        onClick={() => {
-                          void windowControls.close()
-                        }}
-                      >
-                        <span className="window-control-glyph">×</span>
-                      </Button>
-                    </Tooltip>
+                    <Button
+                      size="small"
+                      type="text"
+                      onClick={() => {
+                        void windowControls.minimize()
+                      }}
+                    >
+                      <span className="i-lucide-minus text-[15px]" />
+                    </Button>
+                    <Button
+                      size="small"
+                      type="text"
+                      onClick={() => {
+                        void windowControls.toggleMaximize()
+                      }}
+                    >
+                      <span
+                        className={`text-[12px] ${
+                          windowState.isMaximized ? 'i-lucide-minimize-2' : 'i-lucide-maximize-2'
+                        }`}
+                      />
+                    </Button>
+                    <Button
+                      size="small"
+                      type="text"
+                      aria-label="关闭窗口"
+                      onClick={() => {
+                        void windowControls.close()
+                      }}
+                    >
+                      <span className="i-lucide-x text-[15px]" />
+                    </Button>
                   </>
                 ) : null}
               </Flex>
             </Flex>
           </Layout.Header>
 
-          <Layout.Content className="app-scrollbar min-h-0 flex-1 px-5 py-5 md:px-8 md:py-6">
+          <Layout.Content className="min-h-0 flex-1 overflow-y-auto px-5 py-5 md:px-8 md:py-6">
             {children}
           </Layout.Content>
         </div>

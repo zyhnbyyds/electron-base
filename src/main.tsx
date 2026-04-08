@@ -4,7 +4,6 @@ import { App as AntApp, ConfigProvider } from 'antd'
 import zhCN from 'antd/locale/zh_CN'
 import 'antd/dist/reset.css'
 import 'virtual:uno.css'
-import './styles.css'
 import App from '@/app/App'
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(

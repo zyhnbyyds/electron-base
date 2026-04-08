@@ -6,14 +6,15 @@ interface InfoCardProps {
   title: string
   description?: string
   children?: ReactNode
+  className?: string
 }
 
-export function InfoCard({ eyebrow, title, description, children }: InfoCardProps) {
+export function InfoCard({ eyebrow, title, description, children, className }: InfoCardProps) {
   return (
-    <Card className="template-card info-card rounded-[28px]">
+    <Card className={className}>
       <div className="p-6 md:p-7">
         {eyebrow ? (
-          <Typography.Text className="template-kicker mb-3 block text-[11px] font-semibold text-stone-400">
+          <Typography.Text className="tracking-[0.12em] uppercase mb-3 block text-[11px] font-semibold text-stone-400">
             {eyebrow}
           </Typography.Text>
         ) : null}

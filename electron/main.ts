@@ -45,7 +45,6 @@ function createWindow() {
     frame: false,
     titleBarStyle: 'hidden',
     autoHideMenuBar: true,
-    backgroundColor: '#f3f1eb',
     show: false,
     ...(isWindows
       ? {

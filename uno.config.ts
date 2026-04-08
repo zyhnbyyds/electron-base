@@ -1,7 +1,16 @@
-import { defineConfig, presetUno } from 'unocss'
+import { defineConfig, presetIcons, presetWind4 } from 'unocss'
 
 export default defineConfig({
-  presets: [presetUno()],
+  presets: [
+    presetWind4(),
+    presetIcons({
+      scale: 1.2,
+      extraProperties: {
+        display: 'inline-block',
+        'vertical-align': 'middle',
+      },
+    }),
+  ],
   shortcuts: {
     'btn-ghost-sm':
       'px-3 py-1.5 rounded-md text-xs transition-colors cursor-pointer border-0 bg-transparent',
