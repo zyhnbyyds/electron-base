@@ -1,10 +1,10 @@
 import { InfoCard } from '@/components/ui/InfoCard'
+import { App as AntApp, Button, Descriptions, Flex, List, Space, Tag, Typography } from 'antd'
 import {
   presetCapabilities,
   projectStructure,
   qualityScripts,
   quickLinks,
-  templateMeta,
 } from '@/shared/config/app'
 import type { DesktopAppInfo } from '@/shared/types/desktop'
 
@@ -14,155 +14,141 @@ interface HomePageProps {
 }
 
 export function HomePage({ appInfo, openExternal }: HomePageProps) {
+  const { message } = AntApp.useApp()
+  const structureItems = [...projectStructure]
+  const scriptItems = [...qualityScripts]
+
   return (
-    <div className="space-y-6 md:space-y-8">
-      <section
-        id="overview"
-        className="hero-panel overflow-hidden rounded-[32px] px-6 py-7 md:px-8 md:py-9"
-      >
-        <div className="grid gap-8 xl:grid-cols-[minmax(0,1.15fr)_360px] xl:items-end">
-          <div className="relative max-w-3xl space-y-6">
-            <div className="hero-orbit absolute -left-10 top-2 hidden h-28 w-28 xl:block" />
-            <p className="template-kicker text-[11px] font-semibold text-stone-400">
-              Immersive Desktop Template
-            </p>
-            <div className="space-y-4">
-              <h1 className="max-w-3xl text-4xl font-semibold tracking-[-0.06em] text-stone-950 md:text-6xl">
+    <Flex vertical gap={16} className="h-full">
+      {/* Hero 区域：拍平，无外层卡片包装 */}
+      <section id="overview">
+        <div className="grid gap-6 xl:grid-cols-[minmax(0,1.3fr)_300px]">
+          <Flex vertical gap={20} justify="center" className="py-2">
+            <div>
+              <Typography.Text className="template-kicker mb-2 inline-block text-[11px] text-stone-400">
+                Immersive Desktop Template
+              </Typography.Text>
+              <Typography.Title
+                level={2}
+                className="!mb-2 !mt-1 !max-w-2xl !font-semibold !tracking-[-0.04em] !text-stone-950"
+              >
                 用更安静的页面，承载更重的桌面业务。
-              </h1>
-              <p className="max-w-2xl text-sm leading-7 text-stone-600 md:text-base">
-                这个模板现在更像一个工作台，而不是演示页。顶部状态栏负责传达环境与状态，首屏负责说明结构与能力，其余视觉层尽量退后，让后续业务更容易接入。
-              </p>
+              </Typography.Title>
+              <Typography.Paragraph className="!mb-0 !max-w-2xl !text-sm !leading-7 !text-stone-500">
+                顶部状态栏负责传达环境与状态，页面直接展示能力、结构和运行环境，后续接入业务时更直接。
+              </Typography.Paragraph>
             </div>
 
-            <div className="flex flex-wrap gap-3">
+            <Space size={[8, 8]} wrap>
               {quickLinks.map((item) => (
-                <button
+                <Button
                   key={item.href}
-                  type="button"
-                  onClick={() => {
-                    void openExternal(item.href)
+                  shape="round"
+                  onClick={async () => {
+                    const opened = await openExternal(item.href)
+
+                    if (!opened) {
+                      void message.error(`打开失败: ${item.label}`)
+                    }
                   }}
-                  className="rounded-full border border-stone-300/80 bg-white/80 px-4 py-2 text-sm text-stone-700 transition-all hover:-translate-y-0.5 hover:border-stone-900 hover:text-stone-950"
                 >
                   {item.label}
-                </button>
+                </Button>
               ))}
-            </div>
-          </div>
+            </Space>
+          </Flex>
 
-          <div className="hero-grid rounded-[28px] p-4 md:p-5">
-            <div className="rounded-[22px] border border-white/80 bg-white/75 p-5">
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-stone-400">
-                Template Snapshot
-              </p>
-              <div className="mt-4 grid gap-3">
-                <div className="flex items-center justify-between rounded-2xl bg-stone-50/90 px-4 py-3">
-                  <span className="text-sm text-stone-500">Runtime</span>
-                  <span className="text-sm font-medium text-stone-900">{appInfo.runtime}</span>
-                </div>
-                <div className="flex items-center justify-between rounded-2xl bg-stone-50/90 px-4 py-3">
-                  <span className="text-sm text-stone-500">Bridge</span>
-                  <span className="text-sm font-medium text-stone-900">Typed / Ready</span>
-                </div>
-                <div className="flex items-center justify-between rounded-2xl bg-stone-50/90 px-4 py-3">
-                  <span className="text-sm text-stone-500">Version</span>
-                  <span className="text-sm font-medium text-stone-900">{templateMeta.version}</span>
-                </div>
-              </div>
-            </div>
-          </div>
+          <InfoCard eyebrow="Runtime" title="运行环境">
+            <Descriptions
+              column={1}
+              size="small"
+              colon={false}
+              items={[
+                { key: 'app', label: '应用名', children: appInfo.name },
+                { key: 'platform', label: '平台', children: appInfo.platform },
+                { key: 'electron', label: 'Electron', children: appInfo.versions.electron },
+                { key: 'chrome', label: 'Chrome', children: appInfo.versions.chrome },
+                { key: 'node', label: 'Node.js', children: appInfo.versions.node },
+              ]}
+            />
+          </InfoCard>
         </div>
       </section>
 
-      <div className="grid gap-6 xl:grid-cols-[minmax(0,1.3fr)_minmax(320px,0.7fr)]">
-        <div className="space-y-6">
-          <InfoCard
-            eyebrow="预置能力"
-            title="保留基础设施，移除业务噪音"
-            description="现在的模板只保留真正通用的部分，方便你从这里继续扩展。"
-          >
-            <div className="grid gap-3 sm:grid-cols-2">
-              {presetCapabilities.map((item) => (
-                <div
-                  key={item}
-                  className="rounded-2xl border border-stone-200/80 bg-stone-50/80 px-4 py-3 text-sm text-stone-700 transition-transform hover:-translate-y-0.5"
-                >
-                  {item}
-                </div>
-              ))}
-            </div>
-          </InfoCard>
-
+      {/* 底部三栏等高卡片 */}
+      <div className="grid min-h-0 gap-4 xl:grid-cols-3">
+        <section id="structure" className="min-h-0">
           <InfoCard
             eyebrow="项目结构"
-            title="按职责拆分后的目录"
-            description="后续新增页面、组件、bridge 或业务模块时，不再需要把所有逻辑塞进一个文件。"
+            title="目录职责清晰"
+            description="只保留会影响扩展效率的信息。"
           >
-            <div className="space-y-3">
-              {projectStructure.map((item) => (
-                <div
-                  key={item.title}
-                  className="flex items-start justify-between gap-4 rounded-2xl border border-stone-200/80 bg-white/88 px-4 py-4"
-                >
-                  <div>
-                    <p className="text-sm font-medium text-stone-900">{item.title}</p>
-                    <p className="mt-1 text-sm leading-6 text-stone-500">{item.description}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <List
+              size="small"
+              dataSource={structureItems}
+              renderItem={(item) => (
+                <List.Item>
+                  <List.Item.Meta
+                    title={<Typography.Text strong>{item.title}</Typography.Text>}
+                    description={item.description}
+                  />
+                </List.Item>
+              )}
+            />
           </InfoCard>
-        </div>
+        </section>
 
-        <div className="space-y-6">
-          <section id="structure">
-            <InfoCard
-              eyebrow="环境信息"
-              title={templateMeta.version}
-              description="这些数据来自 preload bridge，证明渲染层已经和 Electron 做了类型化解耦。"
-            >
-              <dl className="space-y-3 text-sm">
-                <div className="flex items-center justify-between rounded-2xl bg-stone-50/90 px-4 py-3">
-                  <dt className="text-stone-500">应用名</dt>
-                  <dd className="font-medium text-stone-900">{appInfo.name}</dd>
-                </div>
-                <div className="flex items-center justify-between rounded-2xl bg-stone-50/90 px-4 py-3">
-                  <dt className="text-stone-500">运行时</dt>
-                  <dd className="font-medium text-stone-900">{appInfo.runtime}</dd>
-                </div>
-                <div className="flex items-center justify-between rounded-2xl bg-stone-50/90 px-4 py-3">
-                  <dt className="text-stone-500">平台</dt>
-                  <dd className="font-medium text-stone-900">{appInfo.platform}</dd>
-                </div>
-                <div className="flex items-center justify-between rounded-2xl bg-stone-50/90 px-4 py-3">
-                  <dt className="text-stone-500">Chrome</dt>
-                  <dd className="font-medium text-stone-900">{appInfo.versions.chrome}</dd>
-                </div>
-              </dl>
-            </InfoCard>
-          </section>
-
-          <section id="quality">
-            <InfoCard
-              eyebrow="开发流程"
-              title="默认质量链路"
-              description="模板保留了最基础也最常用的命令，适合继续往上堆业务。"
-            >
-              <div className="space-y-2">
-                {qualityScripts.map((item) => (
-                  <div
-                    key={item}
-                    className="rounded-2xl border border-stone-200/80 bg-white/88 px-4 py-3 font-mono text-sm text-stone-700"
-                  >
+        <section id="quality" className="min-h-0">
+          <InfoCard
+            eyebrow="预置能力"
+            title="通用基础设施"
+            description="组件、类型和质量链路都在，但表达方式更简洁。"
+          >
+            <Flex vertical gap={18}>
+              <Space size={[8, 8]} wrap>
+                {presetCapabilities.map((item) => (
+                  <Tag key={item} bordered={false} className="px-3 py-1 text-sm">
                     {item}
-                  </div>
+                  </Tag>
                 ))}
-              </div>
-            </InfoCard>
-          </section>
-        </div>
+              </Space>
+
+              <List
+                size="small"
+                dataSource={scriptItems}
+                renderItem={(item) => (
+                  <List.Item>
+                    <Typography.Text code>{item}</Typography.Text>
+                  </List.Item>
+                )}
+              />
+            </Flex>
+          </InfoCard>
+        </section>
+
+        <aside className="min-h-0">
+          <InfoCard
+            eyebrow="Tech Stack"
+            title="构建环境版本"
+            description="当前应用的工具链版本一览。"
+          >
+            <Descriptions
+              column={1}
+              size="small"
+              colon={false}
+              items={[
+                { key: 'electron', label: 'Electron', children: appInfo.versions.electron },
+                { key: 'chrome', label: 'Chromium', children: appInfo.versions.chrome },
+                { key: 'node', label: 'Node.js', children: appInfo.versions.node },
+                { key: 'react', label: 'React', children: '19' },
+                { key: 'vite', label: 'Vite', children: '8' },
+                { key: 'antd', label: 'Ant Design', children: '6' },
+                { key: 'ts', label: 'TypeScript', children: '6' },
+              ]}
+            />
+          </InfoCard>
+        </aside>
       </div>
-    </div>
+    </Flex>
   )
 }

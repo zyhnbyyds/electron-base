@@ -6,7 +6,7 @@ import { useDesktopInfo } from '@/shared/hooks/useDesktopInfo'
 
 export default function App() {
   const [activeSection, setActiveSection] = useState<string>(navigation[0].id)
-  const { appInfo, openExternal } = useDesktopInfo()
+  const { appInfo, isElectron, openExternal, windowControls, windowState } = useDesktopInfo()
 
   function handleSelect(id: string) {
     setActiveSection(id)
@@ -19,6 +19,9 @@ export default function App() {
       navigation={navigation}
       activeSection={activeSection}
       onSelect={handleSelect}
+      isElectron={isElectron}
+      windowControls={windowControls}
+      windowState={windowState}
     >
       <HomePage appInfo={appInfo} openExternal={openExternal} />
     </AppShell>
