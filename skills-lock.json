@@ -6,6 +6,11 @@
       "sourceType": "github",
       "computedHash": "3e6022256e6e2d9db1f167910651f7f1c54d91f2911e833148122b856f3a1ed5"
     },
+    "ant-design": {
+      "source": "ant-design/antd-skill",
+      "sourceType": "github",
+      "computedHash": "4d0447d48fced080b2825ecc0fb4d7ca836c8015882899c643acca0b864d5179"
+    },
     "electron": {
       "source": "teachingai/full-stack-skills",
       "sourceType": "github",
